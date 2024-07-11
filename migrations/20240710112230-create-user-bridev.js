@@ -23,7 +23,7 @@ module.exports = {
         unique: true,
       },
       status: {
-        type: Sequelize.TINYINT,
+        type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 1
       },

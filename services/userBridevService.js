@@ -1,6 +1,8 @@
 const userRepository = require('../repositories/userBridevRepository');
+const xlsx = require('xlsx');
+const fs = require('fs');
 
-class UserBridevService {
+class userBridevService {
   async readExcel(filePath) {
     try {
       const workbook = xlsx.readFile(filePath);
@@ -53,4 +55,4 @@ class UserBridevService {
   }
 }
 
-module.exports = new UserBridevService();
+module.exports = new userBridevService();
