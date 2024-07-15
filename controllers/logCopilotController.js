@@ -23,6 +23,23 @@ class LogCopilotController {
             res.status(500).json({ error: error.message });
         }
     }
+
+    async getRangeData(req, res) {
+        try {
+            const dateFrom = req.body.dateFrom;
+            console.log(dateFrom);
+            const dateTo = req.body.dateTo;
+            const {getData, totalHit} = await logCopilotService.getRangeData(dateFrom, dateTo);
+            res.status(200).json({
+                "data" : getData,
+                "summary": {
+                    "totalHit" : totalHit
+                }
+            });
+        } catch(e) {
+            res.status(500).json({"error" : e.message});
+        }
+    }
     
 }
 

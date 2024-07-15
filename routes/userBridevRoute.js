@@ -2,6 +2,7 @@ const express = require('express');
 const userBridevController = require('../controllers/userBridevController');
 const router = express.Router();
 const multer = require('multer');
+const authMiddleware = require('../middlewares/authMiddleware');
 
 const upload = multer({ dest: 'uploads/user-bridev/' });
 

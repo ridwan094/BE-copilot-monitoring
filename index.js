@@ -3,12 +3,17 @@ const bodyParser = require('body-parser');
 const sequelize = require('./config/database');
 const userBridevRoutes = require('./routes/userBridevRoute');
 const logCopilotRoutes = require('./routes/logCopilotRoute');
+const authRoutes = require('./routes/authRoute');
 
 const app = express();
 const PORT = 3000;
 
 app.use(bodyParser.json());
-app.use('/api', [userBridevRoutes, logCopilotRoutes]);
+app.use('/api', [
+  authRoutes,
+  userBridevRoutes, 
+  logCopilotRoutes
+]);
 
 sequelize.sync()
   .then(() => {
