@@ -37,7 +37,28 @@ class LogDailyBridevRepository {
           console.error('Error fetching data:', error);
           throw error;
         }
-      }
+    }
+
+    async findDataSummaryByDate(dateFrom, dateTo) {
+        try {
+          return await LogDailyBridev.findAll({
+            where: {
+              timestamp: {
+                [Op.between]: [dateFrom, dateTo]
+              }
+            },
+            include: [
+              {
+                model: UserBridev,
+                attributes: ['name', 'email_work', 'email_brilian']
+              }
+            ]
+          });
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          throw error;
+        }
+    }
 }
 
 module.exports = new LogDailyBridevRepository();

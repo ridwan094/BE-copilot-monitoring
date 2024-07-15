@@ -5,6 +5,7 @@ const userBridevRoutes = require('./routes/userBridevRoute');
 const logCopilotRoutes = require('./routes/logCopilotRoute');
 const authRoutes = require('./routes/authRoute');
 const logDailyBridevRoute = require('./routes/logDailyBridevRoute');
+const logSummaryRoute = require('./routes/logSummaryRoute');
 
 const app = express();
 const PORT = 3000;
@@ -14,7 +15,8 @@ app.use('/api', [
   authRoutes,
   userBridevRoutes, 
   logCopilotRoutes,
-  logDailyBridevRoute
+  logDailyBridevRoute,
+  logSummaryRoute
 ]);
 
 sequelize.sync()
