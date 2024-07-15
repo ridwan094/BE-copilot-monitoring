@@ -6,5 +6,6 @@ const router = express.Router();
 const upload = multer({ dest: 'uploads/log-daily-bridev/' });
 
 router.post('/log-daily-bridev', upload.single('file'), logController.uploadExcel);
+router.get('/log-daily-bridev/data', logController.getRangeData);
 
 module.exports = router;

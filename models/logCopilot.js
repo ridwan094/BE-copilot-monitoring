@@ -36,4 +36,6 @@ LogCopilot.init({
   timestamps: false
 });
 
+LogCopilot.belongsTo(UserBridev, { foreignKey: 'id_user_bridev' });
+
 module.exports = LogCopilot;

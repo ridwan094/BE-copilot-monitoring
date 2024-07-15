@@ -40,4 +40,6 @@ LogDailyBridev.init({
   timestamps: false
 });
 
+LogDailyBridev.belongsTo(UserBridev, { foreignKey: 'id_user_bridev' });
+
 module.exports = LogDailyBridev;

@@ -64,6 +64,21 @@ class LogDailyBridevService {
 
         return errors;
     }
+
+    async getRangeData(dateFrom, dateTo) {
+        try {
+            const data = await logDailyBridevRepository.findDataByDate(dateFrom, dateTo);
+    
+            const extractedData = data.map(item => item.dataValues);
+    
+            const totalHit = extractedData.length;
+    
+            return { getData: extractedData, totalHit: totalHit };
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    }
 }
 
 module.exports = new LogDailyBridevService();

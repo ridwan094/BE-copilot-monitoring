@@ -1,5 +1,6 @@
 const LogCopilot = require('../models/logCopilot');
 const { Op } = require('sequelize');
+const UserBridev = require('../models/userBridev');
 
 class LogCopilotRepository {
     async create(userId, actor, timestamp) {
@@ -23,19 +24,25 @@ class LogCopilotRepository {
 
     async findDataByDate(dateFrom, dateTo) {
         try {
-            const data = await LogCopilot.findAll({
-                where: {
-                    timestamp: {
-                        [Op.between]: [dateFrom, dateTo]
-                    }
-                }
-            });
-            return data;
+          const data = await LogCopilot.findAll({
+            where: {
+              timestamp: {
+                [Op.between]: [dateFrom, dateTo]
+              }
+            },
+            include: [
+              {
+                model: UserBridev,
+                attributes: ['name', 'email_work', 'email_brilian'] // Specify the columns you want to include
+              }
+            ]
+          });
+          return data;
         } catch (error) {
-            console.error('Error fetching data:', error);
-            throw error;
+          console.error('Error fetching data:', error);
+          throw error;
         }
-    }
+      }
     
 }
 

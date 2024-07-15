@@ -1,4 +1,6 @@
 const  LogDailyBridev = require('../models/logdailybridev');
+const { Op } = require('sequelize');
+const UserBridev = require('../models/userBridev');
 
 class LogDailyBridevRepository {
     async create(logData) {
@@ -14,6 +16,28 @@ class LogDailyBridevRepository {
             }
         });
     }
+
+    async findDataByDate(dateFrom, dateTo) {
+        try {
+          const data = await LogDailyBridev.findAll({
+            where: {
+              timestamp: {
+                [Op.between]: [dateFrom, dateTo]
+              }
+            },
+            include: [
+              {
+                model: UserBridev,
+                attributes: ['name', 'email_work', 'email_brilian'] // Specify the columns you want to include
+              }
+            ]
+          });
+          return data;
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          throw error;
+        }
+      }
 }
 
 module.exports = new LogDailyBridevRepository();
