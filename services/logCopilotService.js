@@ -63,6 +63,10 @@ class LogCopilotService {
         return await logCopilotRepository.create(userId, actor, timestamp);
     }
 
+    async getLogData() {
+        return await logCopilotRepository.findAll();
+    }
+
     async getRangeData(dateFrom, dateTo) {
         try {
             const data = await logCopilotRepository.findDataByDate(dateFrom, dateTo);

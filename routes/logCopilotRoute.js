@@ -8,5 +8,6 @@ const upload = multer({ dest: 'uploads/log-copilot/' });
 
 router.post('/log-copilot', upload.single('file'), logCopilotController.bulkInsertLogs);
 router.get('/log-copilot/data', logCopilotController.getRangeData);
+router.get('/log-copilot/all-data', logCopilotController.getAllData);
 
 module.exports = router;

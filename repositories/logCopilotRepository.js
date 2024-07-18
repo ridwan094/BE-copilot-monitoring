@@ -7,6 +7,10 @@ class LogCopilotRepository {
         return await LogCopilot.create({ id_user_bridev: userId, actor, timestamp });
     }
 
+    async findAll() {
+      return await LogCopilot.findAll();
+    }
+
     async isDataExist(userId, date) {
         try {
             const result = await LogCopilot.findOne({
