@@ -8,7 +8,14 @@ class LogCopilotRepository {
     }
 
     async findAll() {
-      return await LogCopilot.findAll();
+      return await LogCopilot.findAll({
+        include: [
+          {
+            model: UserBridev,
+            attributes: ['name', 'email_work', 'email_brilian']
+          }
+        ]
+      });
     }
 
     async isDataExist(userId, date) {

@@ -39,6 +39,17 @@ class LogDailyBridevRepository {
         }
     }
 
+    async findAll() {
+      return await LogDailyBridev.findAll({
+        include: [
+          {
+            model: UserBridev,
+            attributes: ['name', 'email_work', 'email_brilian']
+          }
+        ]
+      });
+    }
+
     async findDataSummaryByDate(dateFrom, dateTo) {
         try {
           return await LogDailyBridev.findAll({

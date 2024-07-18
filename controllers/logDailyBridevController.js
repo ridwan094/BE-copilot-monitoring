@@ -32,6 +32,14 @@ class LogController {
             res.status(500).json({"error" : e.message});
         }
     }
+    async getAllData(req, res) {
+        try {
+          const log_data = await logService.getLogData();
+          res.status(200).json(log_data);
+        } catch (error) {
+          res.status(500).json({ error: error.message });
+        }
+    }
 }
 
 module.exports = new LogController();

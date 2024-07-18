@@ -65,6 +65,10 @@ class LogDailyBridevService {
         return errors;
     }
 
+    async getLogData() {
+        return await logDailyBridevRepository.findAll();
+    }
+
     async getRangeData(dateFrom, dateTo) {
         try {
             const data = await logDailyBridevRepository.findDataByDate(dateFrom, dateTo);
