@@ -2,6 +2,7 @@ const LogCopilot = require('../models/logCopilot');
 const { Op } = require('sequelize');
 const UserBridev = require('../models/userBridev');
 const Suspect = require('../models/suspect');
+const moment = require('moment');
 
 class LogCopilotRepository {
     async create(userId, actor, timestamp) {
@@ -56,11 +57,19 @@ class LogCopilotRepository {
       }
     
     async findDataSummaryByDate(dateFrom, dateTo) {
+      console.log("date from : ", dateFrom);
+      console.log("date to : ", dateTo);
+      
+      const endOfDay = moment(dateTo).endOf('day').toDate();
+      // const adjustedDateTo = moment(dateTo).subtract(1, 'days').toDate();
+      
+      // console.log("date to : ", adjustedDateTo);
+
         try {
             return await Suspect.findAll({
                 where: {
                     createdAt: {
-                    [Op.between]: [dateFrom, dateTo]
+                    [Op.between]: [dateFrom, endOfDay]
                     }
                 }
             });
