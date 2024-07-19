@@ -3,53 +3,82 @@ const xlsx = require('xlsx');
 const fs = require('fs');
 const moment = require('moment-timezone');
 const userBridevRepository = require('../repositories/userBridevRepository');
+const cacheRepository = require('../repositories/cacheRepository');
+const whitelistUserRepository = require('../repositories/whitelistUserRepository');
 
 class LogCopilotService {
     async readExcel(filePath) {
+        console.log("file path : ", filePath);
         try {
             const workbook = xlsx.readFile(filePath);
-            const sheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[sheetName];
-            const excelData = xlsx.utils.sheet_to_json(worksheet);
-            fs.unlinkSync(filePath);
-            
+            const sheetNames = workbook.SheetNames;
             const formattedData = [];
             const errorData = [];
-            for (let i = 0; i < excelData.length; i++) {
-                const { timestamp, actor, external_identity_username } = excelData[i];
     
-                console.log("timestamp : ", timestamp);
-                const unixTimestamp = timestamp / 1000;
+            // Check if file exists before unlinking
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            } else {
+                console.warn(`File not found: ${filePath}`);
+            }
     
-                const jakartaTimestamp = moment.unix(unixTimestamp).tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
+            for (const sheetName of sheetNames) {
+                const worksheet = workbook.Sheets[sheetName];
+                const excelData = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
     
-                console.log("Jakarta Date-Time:", jakartaTimestamp);
+                for (let i = 2; i < excelData.length; i++) {
+                    const row = excelData[i];
+                    console.log("row : ", row);
     
-                let id_user_bridev;
-                
-                if (!external_identity_username) {
-                    id_user_bridev = 9;
-                } else {
-                    const user = await userBridevRepository.findByEmailBrilian(external_identity_username);
-                    
-                    if (user) {
-                        id_user_bridev = user.id;
-                    } else {
-                        errorData.push(`Error Row ${i + 1} : Email ${external_identity_username} belum ada di daftar User Bridev`);
+                    if (row[0] === "Total Hit" && row[1] === undefined) {
                         continue;
                     }
-                }
     
-                // Pengecekan keberadaan data di tabel
-                const isExist = await logCopilotRepository.isDataExist(id_user_bridev, jakartaTimestamp);
-                if (isExist) {
-                    errorData.push(`Error Row ${i + 1} : Data dengan id_user_bridev ${id_user_bridev} dan timestamp ${jakartaTimestamp} sudah ada`);
-                } else {
-                    formattedData.push({
-                        id_user_bridev: id_user_bridev,
-                        actor: actor,
-                        timestamp: jakartaTimestamp
-                    });
+                    // Check if the row is empty and move to the next sheet
+                    if (row.every(cell => cell === undefined)) {
+                        break;
+                    }
+    
+                    const email = row[0];
+                    const emailWork = row[1];
+                    const hit = row[2];
+                    const timestamp = row[5];
+                    const notes = row[6];
+                    const checkBridev = row[7];
+                    const checkBridevLowerCase = checkBridev ? checkBridev.toLowerCase() : "";
+    
+                    const emailToCheck = emailWork || email;
+                    const isWhitelisted = await whitelistUserRepository.findByEmail(emailToCheck);
+                    if (isWhitelisted) {
+                        continue;
+                    } else {
+                        if (emailWork) {
+                            const checkEmailWork = await userBridevRepository.findByEmailWork(emailWork);
+                            
+                            if (checkBridevLowerCase == "tidak") {
+                                formattedData.push({
+                                    email_work: emailWork,
+                                    createdAt: timestamp,
+                                    updatedAt: timestamp,
+                                });
+                            }
+                            
+                        } else if (email) {
+                            const checkEmailBrilian = await userBridevRepository.findByEmailBrilian(email);
+                            if (checkBridevLowerCase == "tidak") {
+                                formattedData.push({
+                                    email_bri: email,
+                                    createdAt: timestamp,
+                                    updatedAt: timestamp,
+                                });
+                            }
+                            
+                        } else {
+                            errorData.push(`Error Row ${i + 1} : Kedua email work dan email kosong.`);
+                        }
+                    }
+    
+                    
                 }
             }
     
@@ -58,9 +87,9 @@ class LogCopilotService {
             throw error;
         }
     }
-
-    async createLogCopilot(userId, actor, timestamp) {
-        return await logCopilotRepository.create(userId, actor, timestamp);
+    
+    async bulkInsertLogCopilots(data) {
+        return await logCopilotRepository.bulkCreate(data);
     }
 
     async getLogData() {

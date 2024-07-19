@@ -7,10 +7,8 @@ class LogCopilotController {
             const filePath = req.file.path;
             const { formattedData, errorData } = await logCopilotService.readExcel(filePath);
     
-            for (let i = 0; i < formattedData.length; i++) {
-                const { id_user_bridev, actor, timestamp } = formattedData[i];
-    
-                await logCopilotService.createLogCopilot(id_user_bridev, actor, timestamp);
+            if (formattedData.length > 0) {
+                await logCopilotService.bulkInsertLogCopilots(formattedData);
             }
     
             if (errorData.length > 0) {

@@ -1,10 +1,15 @@
 const LogCopilot = require('../models/logCopilot');
 const { Op } = require('sequelize');
 const UserBridev = require('../models/userBridev');
+const Suspect = require('../models/suspect');
 
 class LogCopilotRepository {
     async create(userId, actor, timestamp) {
         return await LogCopilot.create({ id_user_bridev: userId, actor, timestamp });
+    }
+
+    async bulkCreate(data) {
+        return await Suspect.bulkCreate(data);
     }
 
     async findAll() {
