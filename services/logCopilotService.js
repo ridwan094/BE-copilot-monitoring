@@ -43,10 +43,14 @@ class LogCopilotService {
                     const emailWork = row[1];
                     const hit = row[2];
                     const timestamp = row[5];
+                    const get_timestamp_code = row[3];
                     const notes = row[6];
                     const checkBridev = row[7];
                     const checkBridevLowerCase = checkBridev ? checkBridev.toLowerCase() : "";
-    
+                    console.log("timestamp code : ", get_timestamp_code);
+                    const save_convert_utc_timestamp = moment(get_timestamp_code).tz('UTC').format();
+                    
+                    console.log("converting to utc timestamp : ", save_convert_utc_timestamp);
                     const emailToCheck = emailWork || email;
                     const isWhitelisted = await whitelistUserRepository.findByEmail(emailToCheck);
                     if (!isWhitelisted) {
@@ -58,7 +62,7 @@ class LogCopilotService {
                                     email_work: emailWork,
                                     email_bri: email,
                                     createdAt: timestamp,
-                                    updatedAt: timestamp,
+                                    updatedAt: save_convert_utc_timestamp,
                                 });
                             }
                             
@@ -69,7 +73,7 @@ class LogCopilotService {
                                     email_bri: email,
                                     email_work: emailWork,
                                     createdAt: timestamp,
-                                    updatedAt: timestamp,
+                                    updatedAt: save_convert_utc_timestamp,
                                 });
                             }
                             

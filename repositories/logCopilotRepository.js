@@ -13,7 +13,9 @@ class LogCopilotRepository {
     }
 
     async findAll() {
-      return await Suspect.findAll();
+      return await Suspect.findAll({
+        order: [['createdAt', 'DESC']] // Sorts by 'created_at' in descending order
+      });
     }
 
     async isDataExist(userId, date) {
