@@ -49,15 +49,14 @@ class LogCopilotService {
     
                     const emailToCheck = emailWork || email;
                     const isWhitelisted = await whitelistUserRepository.findByEmail(emailToCheck);
-                    if (isWhitelisted) {
-                        continue;
-                    } else {
+                    if (!isWhitelisted) {
                         if (emailWork) {
                             const checkEmailWork = await userBridevRepository.findByEmailWork(emailWork);
                             
                             if (checkBridevLowerCase == "tidak") {
                                 formattedData.push({
                                     email_work: emailWork,
+                                    email_bri: email,
                                     createdAt: timestamp,
                                     updatedAt: timestamp,
                                 });
@@ -68,6 +67,7 @@ class LogCopilotService {
                             if (checkBridevLowerCase == "tidak") {
                                 formattedData.push({
                                     email_bri: email,
+                                    email_work: emailWork,
                                     createdAt: timestamp,
                                     updatedAt: timestamp,
                                 });
