@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const sequelize = require('./config/database');
 const userBridevRoutes = require('./routes/userBridevRoute');
 const logCopilotRoutes = require('./routes/logCopilotRoute');
@@ -9,6 +10,13 @@ const logSummaryRoute = require('./routes/logSummaryRoute');
 
 const app = express();
 const PORT = 3000;
+
+app.use(cors({
+  origin: 'http://localhost:3001',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization',  'Insert-Type']
+}));
+
 
 app.use(bodyParser.json());
 app.use('/api', [

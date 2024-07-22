@@ -64,7 +64,6 @@ class LogCopilotRepository {
       // const adjustedDateTo = moment(dateTo).subtract(1, 'days').toDate();
       
       // console.log("date to : ", adjustedDateTo);
-
         try {
             return await Suspect.findAll({
                 where: {
