@@ -1,10 +1,9 @@
-const { DataTypes, Model } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 const UserBridev = require('./userBridev');
 
-class LogDailyBridev extends Model {}
-
-LogDailyBridev.init({
+// Mendefinisikan model LogDailyBridev
+const LogDailyBridev = sequelize.define('LogDailyBridev', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -19,7 +18,7 @@ LogDailyBridev.init({
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: UserBridev,
+      model: UserBridev, // Pastikan model UserBridev sudah didefinisikan dan diekspor
       key: 'id'
     },
     onUpdate: 'CASCADE',
@@ -34,12 +33,11 @@ LogDailyBridev.init({
     allowNull: false
   }
 }, {
-  sequelize,
-  modelName: 'LogDailyBridev',
-  tableName: 'LogDailyBridevs',
-  timestamps: false
+  tableName: 'LogDailyBridevs', // Nama tabel dalam database
+  timestamps: false // Nonaktifkan timestamps jika tidak menggunakan createdAt dan updatedAt
 });
 
+// Menetapkan relasi antara model LogDailyBridev dan UserBridev
 LogDailyBridev.belongsTo(UserBridev, { foreignKey: 'id_user_bridev' });
 
 module.exports = LogDailyBridev;

@@ -3,7 +3,6 @@ const xlsx = require('xlsx');
 const fs = require('fs');
 const moment = require('moment-timezone');
 const userBridevRepository = require('../repositories/userBridevRepository');
-const cacheRepository = require('../repositories/cacheRepository');
 const whitelistUserRepository = require('../repositories/whitelistUserRepository');
 
 class LogCopilotService {

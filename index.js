@@ -7,6 +7,8 @@ const logCopilotRoutes = require('./routes/logCopilotRoute');
 const authRoutes = require('./routes/authRoute');
 const logDailyBridevRoute = require('./routes/logDailyBridevRoute');
 const logSummaryRoute = require('./routes/logSummaryRoute');
+const userRoutes = require('./routes/userRoute');
+require('dotenv').config();
 
 const app = express();
 const PORT = 3000;
@@ -20,6 +22,7 @@ app.use(cors({
 
 app.use(bodyParser.json());
 app.use('/api', [
+  userRoutes,
   authRoutes,
   userBridevRoutes, 
   logCopilotRoutes,

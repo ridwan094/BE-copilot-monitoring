@@ -1,29 +1,45 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/database');
+const Role = require('./role');
 
-const User = sequelize.define('User', {
+class User extends Model {}
+
+User.init({
   id: {
     type: DataTypes.INTEGER,
-    autoIncrement: true,
     primaryKey: true,
+    autoIncrement: true,
+    allowNull: false
   },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
+    unique: true
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: false
+  },
+  role_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Role, // Mengacu pada model Role
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL'
   },
   is_login: {
     type: DataTypes.BOOLEAN,
-    defaultValue: false,
-  },
+    defaultValue: false
+  }
 }, {
-  timestamps: true,
-  createdAt: 'created_at',
-  updatedAt: 'updated_at',
+  sequelize,
+  modelName: 'User',
+  tableName: 'Users',
+  timestamps: true
 });
+
+User.belongsTo(Role, { foreignKey: 'role_id' });
 
 module.exports = User;

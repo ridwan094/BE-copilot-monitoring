@@ -1,17 +1,45 @@
 const User = require('../models/user');
 
 class UserRepository {
-    async create(user) {
-        return await User.create(user);
-    }
+  async createUser(userData) {
+    return User.create(userData);
+  }
 
-    async findByEmail(email) {
-        return await User.findOne({ where: { email } });
-    }
+  async findUserByEmail(email) {
+    return User.findOne({ where: { email } });
+  }
 
-    async updateIsLogin(id, is_login) {
-        return await User.update({ is_login }, { where: { id } });
+  async findAllUsers() {
+    return User.findAll({ include: 'Role' });
+  }
+
+  async findUserById(id) {
+    return User.findByPk(id, { include: 'Role' });
+  }
+
+  async updateUser(id, userData) {
+    const user = await User.findByPk(id);
+    if (user) {
+      return user.update(userData);
     }
+    return null;
+  }
+
+  async deleteUser(id) {
+    const user = await User.findByPk(id);
+    if (user) {
+      return user.destroy();
+    }
+    return null;
+  }
+
+  async updateLoginStatus(id, status) {
+    const user = await User.findByPk(id);
+    if (user) {
+      return user.update({ is_login: status });
+    }
+    return null;
+  }
 }
 
 module.exports = new UserRepository();

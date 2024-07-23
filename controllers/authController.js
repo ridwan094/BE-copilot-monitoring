@@ -1,42 +1,41 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const userRepository = require('../repositories/userRepository');
-require('dotenv').config();
-const secretKey = process.env.SECRET_KEY;
+const UserRepository = require('../repositories/userRepository');
 
-class AuthController {
-  async register(req, res) {
-    const { email, password } = req.body;
-
-    const hashedPassword = await bcrypt.hash(password, 8);
-
-    const user = await userRepository.create({ email, password: hashedPassword });
-
-    res.status(201).json({ user });
+exports.register = async (req, res) => {
+  const { email, password, role_id } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
+  
+  try {
+    const user = await UserRepository.createUser({ email, password: hashedPassword, role_id });
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
+};
 
-  async login(req, res) {
-    const { email, password } = req.body;
-
-    const user = await userRepository.findByEmail(email);
-    if (!user || !await bcrypt.compare(password, user.password)) {
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await UserRepository.findUserByEmail(email);
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
-
-    await userRepository.updateIsLogin(user.id, true);
-
-    const token = jwt.sign({ id: user.id }, secretKey, { expiresIn: '1h' });
-
-    res.status(200).json({ token });
+    
+    const token = jwt.sign({ id: user.id, role_id: user.role_id, email: user.email }, process.env.JWT_SECRET);
+    await UserRepository.updateLoginStatus(user.id, true);
+    res.json({ "token" : token, "userInfo" : user });
+  } catch (error) {
+    res.status(500).json({ message: error.message, "error" : "have an error" });
   }
+};
 
-  async logout(req, res) {
-    const userId = req.userId;
-
-    await userRepository.updateIsLogin(userId, false);
-
+exports.logout = async (req, res) => {
+  const userId = req.user.id;
+  try {
+    await UserRepository.updateLoginStatus(userId, false);
     res.status(200).json({ message: 'Logged out successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-}
-
-module.exports = new AuthController();
+};
