@@ -14,7 +14,7 @@ const app = express();
 const PORT = 3000;
 
 app.use(cors({
-  origin: 'http://localhost:3001',
+  origin: 'https://fe-monitoring-copilot-k4sb3rrmz-oktavianbayuws-projects.vercel.app:3001',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization',  'Insert-Type']
 }));
